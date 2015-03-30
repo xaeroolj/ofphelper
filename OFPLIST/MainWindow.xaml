@@ -1,0 +1,93 @@
+﻿<Window x:Class="OFPLIST.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CFP_Export" Height="350" Width="600" SizeToContent="Width" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <DataTemplate x:Key="cFP_Template">
+            <Border Name="cfp_Border" BorderBrush="Black" BorderThickness="1"
+          Padding="1" Margin="2">
+                <Grid x:Name="itemGrid">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Flight: "/>
+                    <TextBlock Text="{Binding Flight}" FontWeight="Bold" Grid.Column="1" Margin="5,0"/>
+                    <TextBlock Text="From: " Grid.Column="2"/>
+                    <TextBlock Text="{Binding DepAirField}" FontWeight="Bold" Margin="5,0" Grid.Column="3"/>
+                    <TextBlock Text="To: " Grid.Column="4"/>
+                    <TextBlock Text="{Binding ArrAirField}" FontWeight="Bold" Margin="5,0" Grid.Column="5"/>
+                    <TextBlock Text="CFPREF: " Grid.Column="6"/>
+                    <TextBlock Text="{Binding CFPREF}" FontWeight="Bold" Margin="5,0" Grid.Column="7"/>
+                    <TextBlock Text="DATE: " Grid.Column="8"/>
+                    <TextBlock Text="{Binding FlightDate, StringFormat=yyMMdd}" FontWeight="Bold" Margin="5,0" Grid.Column="9"/>
+                    <TextBlock Text="ACID: " Grid.Column="10"/>
+                    <TextBlock Text="{Binding AircraftReg}" FontWeight="Bold" Margin="5,0" Grid.Column="11"/>
+                    <TextBlock Text="status: " Grid.Column="12"/>
+                    <TextBlock Text="{Binding StS}" FontWeight="Bold" Margin="5,0" Grid.Column="13"/>
+                </Grid>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding StS}" Value="filePending">
+                    <Setter TargetName="itemGrid" Property="Background" Value="Yellow"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StS}" Value="fileOk">
+                    <Setter TargetName="itemGrid" Property="Background" Value="Green"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding StS}" Value="fileError">
+                    <Setter TargetName="itemGrid" Property="Background" Value="Red"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="59*"/>
+            <ColumnDefinition Width="7*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="143*"/>
+            <RowDefinition Height="17*"/>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="cFP_List" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="true"
+                 BorderBrush="Black" ItemTemplate="{DynamicResource cFP_Template}"
+                 HorizontalContentAlignment="Stretch" ScrollViewer.ScrollChanged="cFP_List_ScrollChanged"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2">
+            <Button x:Name="oPenFolderDialogBtn" Content="Save To:" HorizontalAlignment="Left" VerticalAlignment="Center" Width="75" Click="oPenFolderDialogBtn_Click" Margin="10,0"/>
+            <TextBox x:Name="openTxtBox" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,0,0"/>
+            <Button x:Name="exportStartBtn" Content="Begin Export!" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10,0" Width="75" Click="exportStartBtn_Click"/>
+            <Button x:Name="clearBtn" Content="Clear List" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,0" Width="75" Click="clearBtn_Click" />
+            <Button x:Name="refreshBtn" Visibility="Hidden" Content="Refresh" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,0" Width="75" Click="refreshBtn_Click"/>
+            <Button x:Name="openNewWindowBtn"  Content="IFPS validate" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,0" Width="75" Click="openNewWindowBtn_Click"/>
+            <Button x:Name="mouseRecorderBtn" Content="Mouse Recorder" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,0" Width="75" Click="mouseRecorderBtn_Click" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,5,0" HorizontalAlignment="Right" Width="56">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock TextWrapping="Wrap" Text="Pending: "/>
+                <TextBlock x:Name="pendingLable" TextWrapping="Wrap" TextAlignment="Right" Text="0" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock TextWrapping="Wrap" Text="Ok: "/>
+                <TextBlock x:Name="okLable" TextWrapping="Wrap" TextAlignment="Right" Text="0" FontWeight="Bold"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock TextWrapping="Wrap" Text="Errors: "/>
+                <TextBlock x:Name="errorLable" TextWrapping="Wrap" TextAlignment="Right" Text="0" FontWeight="Bold"/>
+            </StackPanel>
+
+        </StackPanel>
+
+    </Grid>
+</Window>
