@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Configuration;
 using SITAOFPHelper;
 using System.Net;
+using System.Net.Configuration;
 using System.Net.Sockets;
 using System.IO;
 using System.Deployment.Application;
@@ -53,7 +54,7 @@ namespace PreBriefMini
             InitializeComponent();
             this.DataContext = this;
             this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
-            
+            System.Net.WebProxy.GetDefaultProxy().UseDefaultCredentials = true;
             /*
             mode1.Click += new RoutedEventHandler(mode1_Click);
             mode2.Click += new RoutedEventHandler(mode2_Click);
@@ -77,7 +78,7 @@ namespace PreBriefMini
                     try
                     {
                         
-                        System.Net.GlobalProxySelection.Select.ToString();
+                        
                         proxy.GetServerTime();
                         netIndicator2.Fill = new SolidColorBrush(Colors.Green);
                     }
@@ -95,6 +96,8 @@ namespace PreBriefMini
                         sb.AppendLine(ex.StackTrace.ToString());
                         sb.AppendLine("TargetSite: ");
                         sb.AppendLine(ex.TargetSite.ToString());
+
+
                         EX = sb.ToString();
                     }
                 }
