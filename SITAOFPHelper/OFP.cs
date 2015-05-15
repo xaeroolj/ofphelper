@@ -14,6 +14,14 @@ namespace SITAOFPHelper
         //Begin of Class
 
         //Begin of Fields
+        private List<string> etpList = new List<string>();
+
+        public List<string> ETPList 
+        {
+            get { return etpList; }
+            set { etpList = value; }
+        }
+
         private bool backFlight = false;
         public bool BackFlight
         {
@@ -100,11 +108,11 @@ namespace SITAOFPHelper
             //Поиск необходимой иннформации
             for (int i = 0; i < originalOFPText.Count; i++)
             {
-                List<string> words = new List<string>();
+                List<string> words = new List<string>(); 
 
-                string[] wordss = trimmedOFPText[i].Trim().Split(' ');
+                string[] wordss = trimmedOFPText[i].Trim().Split(' '); //масмсив слов
 
-                foreach (string ssss in wordss)
+                foreach (string ssss in wordss) 
                 {
                     words.Add(ssss);
                 }
@@ -163,6 +171,33 @@ namespace SITAOFPHelper
                     }
                 }
 
+                /* Поиск Маршрутных запасных
+                                 ALTERNATE REQUIRED AVAILABILITY TIMES                                             
+                  ALTERNATE      FROM         TO                                                   
+                   ULLI          12.05        14.18                                                
+                   UWGG          12.12        15.10                                                
+                   USSS          13.01        15.13                                                
+                                                                                   
+                                                                                   
+                 FUEL TO ETP BETWEEN ULLI AND USSS IS 2730  TIME 00.49 DIST  394 NM 
+                 */
+                if (words[0] == "ALTERNATE" && words[1] == "FROM" && words[2] == "TO")
+                {
+                    List<string> wordsInString = new List<string>();
+
+                    string[] stringsInFile = trimmedOFPText[i+1].Trim().Split(' '); 
+                    
+                    
+                    int n = 1;
+                    do
+                    {
+
+                        etpList.Add((trimmedOFPText[i + n].Trim().Split(' '))[0]);
+                        n++;
+                    } while ((trimmedOFPText[i + n].Trim().Split(' '))[0] != "");
+                    //etpList.Add("");
+                    continue;
+                }
             }
             icaoFPL = new ICAOFPL(trimmedOFPText);
 

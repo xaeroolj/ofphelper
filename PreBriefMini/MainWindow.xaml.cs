@@ -25,6 +25,8 @@ using System.Deployment.Application;
 using System.Net.NetworkInformation;
 using PreBriefMini.Statistic_Service;
 using System.Security.Principal;
+using System.DirectoryServices;
+
 
 
 namespace PreBriefMini
@@ -52,6 +54,7 @@ namespace PreBriefMini
         {
             
             InitializeComponent();
+            UPDATER.InstallUpdateSyncWithInfo();
             this.DataContext = this;
             this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
             System.Net.WebProxy.GetDefaultProxy().UseDefaultCredentials = true;
@@ -414,14 +417,17 @@ namespace PreBriefMini
                     //((App)Application.Current).OFPLIST
                     string dateTImeNow = String.Format("{0:MM.dd.yyyy HH:mm:ss}", DateTime.Now);
                     string username = Environment.UserName;
+                    string userdomain = Environment.UserDomainName;
+                    string useremail = adGetInfo(username, userdomain);
+                     
                     //
                     Statistic_ServiceClient service_proxy = new Statistic_ServiceClient();
                     StreamWriter sw = File.AppendText(dirpatch);
                         
                             foreach(OFP tempOfp in ((App)Application.Current).OFPLIST)
                             {
-                                sw.WriteLine(tempOfp.Flight + " " + dateTImeNow + " " + username);
-                                //service_proxy.AddLogAsync(tempOfp.Flight + " " + dateTImeNow + " " + username);
+                                sw.WriteLine(tempOfp.Flight + " " + dateTImeNow + " " + useremail);
+                                service_proxy.AddLogAsync(tempOfp.Flight + " " + dateTImeNow + " " + useremail);
                             }
                     service_proxy.Close();
                 }
@@ -436,6 +442,40 @@ namespace PreBriefMini
         {
             MessageBox.Show(EX);
             
+        }
+
+        public static string adGetInfo(string accName, string domain)
+        {
+            using (DirectoryEntry de = new DirectoryEntry("LDAP://" + domain))
+            {
+                using (DirectorySearcher adSearch = new DirectorySearcher(de))
+                {
+                    try
+                    {
+                        adSearch.Filter = "sAMAccountName=" + accName;
+                        SearchResult adSearchResoult = adSearch.FindOne();
+                        //return GetProperty(adSearchResoult, "sn");
+                        return GetProperty(adSearchResoult, "mail");
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.Message;
+                    }
+                }
+
+            }
+
+        }
+        public static string GetProperty(SearchResult searchResult, string PropertyName)
+        {
+            if (searchResult.Properties.Contains(PropertyName))
+            {
+                return searchResult.Properties[PropertyName][0].ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
     
