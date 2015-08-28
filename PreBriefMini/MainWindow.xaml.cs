@@ -24,6 +24,7 @@ using System.IO;
 using System.Deployment.Application;
 using System.Net.NetworkInformation;
 using PreBriefMini.Statistic_Service;
+using PreBriefMini.someeTestService;
 using System.Security.Principal;
 using System.DirectoryServices;
 
@@ -76,13 +77,14 @@ namespace PreBriefMini
             {
                 // Сеть доступна
                 netIndicator1.Fill = new SolidColorBrush(Colors.Green);
-                using(Statistic_ServiceClient proxy = new Statistic_ServiceClient())
+                //using(Statistic_ServiceClient proxy = new Statistic_ServiceClient())
+                using (TestServiceClient proxy = new TestServiceClient())
                 {
                     try
                     {
                         
                         
-                        proxy.GetServerTime();
+                        proxy.GetServerTIme();
                         netIndicator2.Fill = new SolidColorBrush(Colors.Green);
                     }
                     catch(Exception ex)
@@ -421,15 +423,19 @@ namespace PreBriefMini
                     string useremail = adGetInfo(username, userdomain);
                      
                     //
-                    Statistic_ServiceClient service_proxy = new Statistic_ServiceClient();
+                    //Statistic_ServiceClient service_proxy = new Statistic_ServiceClient();
+                    TestServiceClient somee_proxy = new TestServiceClient();
                     StreamWriter sw = File.AppendText(dirpatch);
                         
                             foreach(OFP tempOfp in ((App)Application.Current).OFPLIST)
                             {
                                 sw.WriteLine(tempOfp.Flight + " " + dateTImeNow + " " + useremail);
-                                service_proxy.AddLogAsync(tempOfp.Flight + " " + dateTImeNow + " " + useremail);
+                                //service_proxy.AddLogAsync(tempOfp.Flight + " " + dateTImeNow + " " + useremail);
+                                somee_proxy.addCHGAsync(dateTImeNow + " " + tempOfp.Flight + " " + useremail);
                             }
-                    service_proxy.Close();
+
+                    somee_proxy.Close();
+                    //service_proxy.Close();
                 }
                 catch (Exception ex)
                 {
